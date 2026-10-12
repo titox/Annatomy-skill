@@ -2462,7 +2462,8 @@ const scene = svg.querySelector(".ol-scene");
 const readout = document.querySelector("[data-readout]");
 const legend = document.querySelector(".ol-legend");
 const still = matchMedia("(prefers-reduced-motion: reduce)");
-const LIGHT = DATA.theme === "light" ? 1 : 0;
+const themeRoot = stage.closest("[data-theme]");
+const isLight = () => (themeRoot && themeRoot.getAttribute("data-theme") === "light" ? 1 : 0);
 const SERVICE = Object.fromEntries(DATA.services.map((s) => [s.id, s]));
 const ZONE_NAME = { build: "Build", deploy: "Deploy", manage: "Manage" };
 const TARGETS = ["cloudinfra", "edgeplatform", "chinainfra", "instruments"];
@@ -2781,7 +2782,7 @@ void main(){
   col.rgb=min(col.rgb,vec3(col.a));
   gl_FragColor=col;
 }`;
-const layer = glLayer({ canvas: stage.querySelector(".ol-gl"), fragment: FRAGMENT, view: [DATA.W, DATA.H], camera: DATA.camera, uniforms: ["uNoz", "uDir", "uNose", "uThrust", "uGround", "uFlash"], fixed: { uLight: LIGHT } });
+const layer = glLayer({ canvas: stage.querySelector(".ol-gl"), fragment: FRAGMENT, view: [DATA.W, DATA.H], camera: DATA.camera, uniforms: ["uNoz", "uDir", "uNose", "uThrust", "uGround", "uFlash", "uLight"] });
 if (layer) stage.setAttribute("data-gl", "");
 function groundUnder(p) {
   const onPad = p[0] > -196 && p[0] < -140 && p[1] > -18 && p[1] < 38;
@@ -2794,7 +2795,7 @@ function drawGl(t, nozzle) {
   const flash = R.flash;
   if (thrust < 0.003 && flash < 0.003) { layer.clear(); return; }
   const target = Z.bodyAt(orbitOf(targetId()), t);
-  layer.draw({ uNoz: nozzle, uDir: mul(R.axis, -1), uNose: add(nozzle, mul(R.axis, Z.ROCKET_LEN)), uThrust: thrust, uGround: groundUnder(nozzle), uFlash: [...target, flash] }, t);
+  layer.draw({ uNoz: nozzle, uDir: mul(R.axis, -1), uNose: add(nozzle, mul(R.axis, Z.ROCKET_LEN)), uThrust: thrust, uGround: groundUnder(nozzle), uFlash: [...target, flash], uLight: isLight() }, t);
 }
 
 // ---------------------------------------------------------------- hover and legend

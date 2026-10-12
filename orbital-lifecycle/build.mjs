@@ -478,6 +478,15 @@ const script = [
   readFileSync(join(HERE, "live.js"), "utf8"),
 ].join("\n");
 
+if (process.argv.includes("--artifact")) {
+  // One page for the Artifact viewer: it follows the viewer's theme, and the publish step adds the document skeleton.
+  const sync = `<script>(function(){var w=document.currentScript.parentNode,r=document.documentElement,m=matchMedia("(prefers-color-scheme: light)");function s(){var t=r.getAttribute("data-theme");w.setAttribute("data-theme",t==="light"||t==="dark"?t:(m.matches?"light":"dark"))}s();new MutationObserver(s).observe(r,{attributes:true,attributeFilter:["data-theme"]});m.addEventListener("change",s)})()</script>`;
+  const css = `:root{--ol-page:#0b0b0b;color-scheme:dark}@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--ol-page:#f2f2ef;color-scheme:light}}:root[data-theme="light"]{--ol-page:#f2f2ef;color-scheme:light}:root[data-theme="dark"]{--ol-page:#0b0b0b;color-scheme:dark}*{box-sizing:border-box}body{background:var(--ol-page);padding-inline:16px}.ol-root{background:var(--anatomy-page);color:var(--anatomy-text);font:14px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}.ol-root .iso-page{width:min(1000px,100%);margin:0 auto;padding-block:24px 48px}.ol-root .iso-figure{margin:0}`;
+  const page = `<title>Platform Lifecycle Orrery</title><style>${k.ISO_CSS}${css}</style><div class="iso ol-root" data-theme="dark">${sync}<main class="iso-page">${body}</main></div><script type="module">${script.replace(/<\/(script)/gi, "<\\/$1")}</script>`;
+  writeFileSync(join(HERE, "orbital-lifecycle-artifact.html"), page);
+  console.log("wrote orbital-lifecycle-artifact.html");
+  process.exit(0);
+}
 const name = theme === "light" ? "orbital-lifecycle-light.html" : "orbital-lifecycle.html";
 writeFileSync(join(HERE, name), k.pageHtml({ title: "Platform lifecycle orrery", theme, body, script, width: 1000 }));
 console.log("wrote", name, `${items.length} static items, ${dyn.length} moving`);
