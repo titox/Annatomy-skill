@@ -1,0 +1,37 @@
+// Every service the customer named, the zone and group it belongs to, and the part that stands for it.
+export const ZONES = [
+  { id: "build", name: "Build", object: "the launch complex", groups: ["Developer Experience", "Application Services", "Drivers and Libraries"] },
+  { id: "deploy", name: "Deploy", object: "the trust gate and the orrery", groups: ["Infrastructure Hosting", "Connectivity Services", "Infrastructure Services", "Digital Trust"] },
+  { id: "manage", name: "Manage", object: "the tracking station", groups: ["Observability and Operations", "Security", "Compliance"] },
+];
+
+export const SERVICES = [
+  { id: "studio", zone: "build", group: "Developer Experience", name: "Studio", object: "assembly hall" },
+  { id: "console", zone: "build", group: "Developer Experience", name: "Platform Console", object: "control desk" },
+  { id: "rocheid", zone: "build", group: "Developer Experience", name: "Roche ID", object: "gate booth and barrier" },
+  { id: "catalog", zone: "build", group: "Developer Experience", name: "Discovery and Catalog", object: "chest of drawers" },
+  { id: "selfservice", zone: "build", group: "Developer Experience", name: "Self-Service", object: "fuel dispenser" },
+  { id: "reporting", zone: "build", group: "Developer Experience", name: "Reporting and Analytics", object: "gauge panel" },
+  { id: "appcloud", zone: "build", group: "Application Services", name: "Cloud", object: "booster stage" },
+  { id: "appedge", zone: "build", group: "Application Services", name: "Edge", object: "upper stage and fairing" },
+  { id: "asdlc", zone: "build", group: "Application Services", name: "aSDLC", object: "service tower and arms" },
+  { id: "connectivity", zone: "build", group: "Drivers and Libraries", name: "Connectivity", object: "cable reel and umbilical" },
+  { id: "ux", zone: "build", group: "Drivers and Libraries", name: "User Experience", object: "module trays" },
+  { id: "cloudinfra", zone: "deploy", group: "Infrastructure Hosting", name: "Cloud Infrastructure", object: "station with solar wings" },
+  { id: "edgeplatform", zone: "deploy", group: "Infrastructure Hosting", name: "Application Platform (Edge)", object: "satellite with dish" },
+  { id: "chinainfra", zone: "deploy", group: "Infrastructure Hosting", name: "China Infra", object: "station on a fenced orbit" },
+  { id: "instruments", zone: "deploy", group: "Infrastructure Hosting", name: "OS for Instruments", object: "probe on the inner orbit" },
+  { id: "transit", zone: "deploy", group: "Connectivity Services", name: "Transit Gateway", object: "gearbox driving every arm" },
+  { id: "hostedzone", zone: "deploy", group: "Connectivity Services", name: "Hosted Zone", object: "beacon on the pole" },
+  { id: "infraservices", zone: "deploy", group: "Infrastructure Services", name: "Infrastructure Services", object: "the planet" },
+  { id: "certman", zone: "deploy", group: "Digital Trust", name: "Certman", object: "key cabinet" },
+  { id: "certify", zone: "deploy", group: "Digital Trust", name: "Certify", object: "scanner bar" },
+  { id: "tpm", zone: "deploy", group: "Digital Trust", name: "TPM Toolkit", object: "lockbox with keypad" },
+  { id: "codesign", zone: "deploy", group: "Digital Trust", name: "Code Signing", object: "stamp cylinder" },
+  { id: "status", zone: "manage", group: "Observability and Operations", name: "Status Page", object: "lamp board" },
+  { id: "sre", zone: "manage", group: "Observability and Operations", name: "SRE", object: "tracking radar" },
+  { id: "finops", zone: "manage", group: "Observability and Operations", name: "Billing Platform (FinOps)", object: "deploy counter" },
+  { id: "security", zone: "manage", group: "Security", name: "Cybersecurity Incident Management", object: "searchlight mast" },
+  { id: "controls", zone: "manage", group: "Compliance", name: "Controls Inheritance and Support", object: "tiered rack" },
+  { id: "navigate", zone: "manage", group: "Compliance", name: "naviGate governance portal", object: "compass gate" },
+];
