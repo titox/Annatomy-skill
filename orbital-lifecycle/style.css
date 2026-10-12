@@ -42,3 +42,4 @@
 .ol-group button[data-on] b{color:var(--zc)}
 @media (max-width:720px){.ol-legend{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.ol-beacon>.iso-top{animation:none}}
+@media (max-width:560px){.iso-plate{padding-bottom:96px}.iso-plate-corner[data-corner="hint"]{bottom:48px}.iso-plate-corner[data-corner="readout"]{left:0;white-space:normal;text-align:right;line-height:1.4}}

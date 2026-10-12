@@ -460,7 +460,7 @@ const stage = `<div class="ol-stage" tabindex="0" role="group" aria-label="Lifec
 const legend = `<div class="ol-legend">${ZONES.map((zone) => `<section class="ol-zone" data-zone="${zone.id}"><h3>${zone.name}<span>${zone.object}</span></h3>${zone.groups.map((group) => `<div class="ol-group"><h4>${group}</h4><ul>${SERVICES.filter((s) => s.zone === zone.id && s.group === group).map((s) => `<li><button type="button" data-svc="${s.id}"><b>${s.name}</b><i>${s.object}</i></button></li>`).join("")}</ul></div>`).join("")}</section>`).join("")}</div>`;
 const caption = "Build, Deploy and Manage as one machine. The rocket is an application release: it is assembled in the launch complex, cleared by the Digital Trust gate, delivered to one of four hosting orbits, and watched by the tracking station before it returns for the next release.";
 
-const body = `<style>${readFileSync(join(HERE, "style.css"), "utf8")}</style>` + k.plateHtml({ fig: "Fig 1", title: "Platform lifecycle · orrery", hint: "Hover a part · space to launch", readout: "on pad · next: Cloud Infrastructure", caption, body: stage }).replace("</figure>", `${legend}</figure>`);
+const body = `<style>${readFileSync(join(HERE, "style.css"), "utf8")}</style>` + k.plateHtml({ fig: "Fig 1", title: "Platform lifecycle · orrery", hint: "Hover or tap a part · space to launch", readout: "on pad · next: Cloud Infrastructure", caption, body: stage }).replace("</figure>", `${legend}</figure>`);
 
 const DATA = { P, W: WIDTH, H: HEIGHT, camera: glCamera(P), services: SERVICES, theme };
 const strip = (source) => source.replace(/^export /gm, "").replace(/^import .*$/gm, "");

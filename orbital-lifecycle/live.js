@@ -83,7 +83,10 @@ const CRUISE_Z = 162;
 const SPEED = 78;
 const orbitOf = (id) => Z.ORBITS.find((o) => o.id === id);
 const outward = (id, t) => { const a = Z.angleOf(orbitOf(id), t); return [Math.cos(a), Math.sin(a), 0]; };
-const standoff = (id, t) => add(Z.bodyAt(orbitOf(id), t), mul(outward(id, t), HALF[id] + 3 + HALF_LEN));
+const DOCK_EL = { cloudinfra: 0, chinainfra: 0, edgeplatform: 1.31, instruments: 1.31 };
+const dockDir = (id, t) => add(mul(outward(id, t), Math.cos(DOCK_EL[id])), [0, 0, Math.sin(DOCK_EL[id])]);
+const standoff = (id, t) => add(Z.bodyAt(orbitOf(id), t), mul(dockDir(id, t), HALF[id] + 3 + HALF_LEN));
+const approach = (id, t) => add(standoff(id, t), add(mul(dockDir(id, t), 26), [0, 0, DOCK_EL[id] ? 0 : 22]));
 function arcPoints(a0, a1, z0, z1, r0, r1) {
   let d = a1 - a0;
   while (d > Math.PI) d -= Math.PI * 2;
@@ -102,7 +105,7 @@ function outboundPath(id, t0) {
   for (let pass = 0; pass < 3; pass++) {
     const a = Z.angleOf(orbitOf(id), arrive);
     const D = standoff(id, arrive);
-    const W = add(D, add(mul(outward(id, arrive), 26), [0, 0, 22]));
+    const W = approach(id, arrive);
     path = spline([TOP, add(TOP, [22, -3, 12]), GATE, ...arcPoints(Math.PI, a, CRUISE_Z, W[2] + 8, INNER_R, ARC_R), W, D]);
     arrive = t0 + path.length / SPEED;
   }
@@ -111,7 +114,7 @@ function outboundPath(id, t0) {
 function returnPath(id, t0) {
   const a = Z.angleOf(orbitOf(id), t0);
   const D = standoff(id, t0);
-  const W = add(D, add(mul(outward(id, t0), 26), [0, 0, 22]));
+  const W = approach(id, t0);
   return spline([D, W, ...arcPoints(a, Math.PI, W[2] + 8, CRUISE_Z - 4, ARC_R, INNER_R), add(GATE, [0, 0, 4]), add(TOP, [22, -3, 16]), TOP]);
 }
 
@@ -164,7 +167,7 @@ function stepFlight(dt) {
     case "dock": {
       const D = standoff(id, R.clock);
       R.centre = mix(R.centre, D, 1 - Math.exp(-dt / 0.25));
-      want = mul(outward(id, R.clock), -1);
+      want = mul(dockDir(id, R.clock), -1);
       break;
     }
     case "land": {
@@ -361,16 +364,32 @@ function setHighlight(id) {
     say(phaseText());
   }
 }
+// Mouse previews on hover. Touch (and pen) selects on tap, and a tap on empty space clears.
+let pinned = null;
+const hovering = (event) => event.pointerType === "mouse";
 svg.addEventListener("pointerover", (event) => {
+  if (!hovering(event)) return;
   const el = event.target.closest("[data-svc]");
-  setHighlight(el ? el.dataset.svc : null);
+  setHighlight(el ? el.dataset.svc : pinned);
 });
-svg.addEventListener("pointerleave", () => setHighlight(null));
-legend.addEventListener("pointerover", (event) => { const b = event.target.closest("button[data-svc]"); if (b) setHighlight(b.dataset.svc); });
-legend.addEventListener("pointerleave", () => setHighlight(null));
-legend.addEventListener("focusin", (event) => { const b = event.target.closest("button[data-svc]"); if (b) setHighlight(b.dataset.svc); });
-legend.addEventListener("focusout", () => setHighlight(null));
-legend.addEventListener("click", (event) => { const b = event.target.closest("button[data-svc]"); if (b) setHighlight(b.dataset.svc); });
+svg.addEventListener("pointerleave", (event) => { if (hovering(event)) setHighlight(pinned); });
+svg.addEventListener("click", (event) => {
+  const el = event.target.closest("[data-svc]");
+  const id = el ? el.dataset.svc : null;
+  pinned = id && id !== pinned ? id : null;
+  setHighlight(pinned);
+});
+legend.addEventListener("pointerover", (event) => { if (!hovering(event)) return; const b = event.target.closest("button[data-svc]"); if (b) setHighlight(b.dataset.svc); });
+legend.addEventListener("pointerleave", (event) => { if (hovering(event)) setHighlight(pinned); });
+legend.addEventListener("focusin", (event) => { const b = event.target.closest("button[data-svc]"); if (b && b.matches(":focus-visible")) setHighlight(b.dataset.svc); });
+legend.addEventListener("focusout", () => setHighlight(pinned));
+legend.addEventListener("click", (event) => {
+  const b = event.target.closest("button[data-svc]");
+  if (!b) return;
+  pinned = b.dataset.svc === pinned ? null : b.dataset.svc;
+  setHighlight(pinned);
+  if (pinned && matchMedia("(max-width:720px)").matches) stage.scrollIntoView({ behavior: still.matches ? "auto" : "smooth", block: "center" });
+});
 stage.addEventListener("keydown", (event) => {
   if (event.key !== " " && event.key !== "Enter") return;
   event.preventDefault();
